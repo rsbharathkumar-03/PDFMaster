@@ -1,0 +1,6 @@
+{
+  "name": "PDFMaster - Free Online PDF Tools",
+  "description": "Convert, compress, merge, split, watermark, rotate, and manage PDF documents online for free with high security.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
