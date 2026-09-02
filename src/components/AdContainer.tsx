@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export type AdSlotType =
   | 'header-banner'
@@ -14,44 +14,79 @@ interface AdContainerProps {
   className?: string;
 }
 
+interface AdSenseWindow extends Window {
+  adsbygoogle?: unknown[];
+}
+
+const ADSENSE_CLIENT = 'ca-pub-5519529513265514';
+
 export const AdContainer: React.FC<AdContainerProps> = ({
   slot,
   slotId,
-  format = 'horizontal',
+  format = 'responsive',
   className = ''
 }) => {
-  const slotLabels: Record<string, { name: string; dim: string }> = {
-    'header-banner': { name: 'Top Leaderboard Ad', dim: '728 × 90' },
-    'between-sections': { name: 'Responsive In-Feed Ad', dim: '970 × 120' },
-    'sidebar': { name: 'Vertical Skyscraper Ad', dim: '300 × 600' },
-    'below-result': { name: 'Download Area Sponsored Slot', dim: '728 × 90' },
-    'footer-banner': { name: 'Bottom Anchor Ad', dim: '728 × 90' },
+  /*
+   * IMPORTANT:
+   * Replace these placeholder values with the actual ad slot IDs
+   * created inside your Google AdSense account.
+   */
+  const adSlots: Record<string, string> = {
+    'header-banner': 'YOUR_HEADER_AD_SLOT_ID',
+    'between-sections': 'YOUR_BETWEEN_SECTIONS_AD_SLOT_ID',
+    'sidebar': 'YOUR_SIDEBAR_AD_SLOT_ID',
+    'below-result': 'YOUR_BELOW_RESULT_AD_SLOT_ID',
+    'footer-banner': 'YOUR_FOOTER_AD_SLOT_ID'
   };
 
-  const activeKey = slot || (format === 'vertical' ? 'sidebar' : 'header-banner');
-  const info = slotLabels[activeKey] || {
-    name: slotId ? `Sponsored Ad (${slotId})` : 'Responsive Ad Unit',
-    dim: format === 'vertical' ? '300 × 600' : format === 'rectangle' ? '300 × 250' : '728 × 90'
-  };
+  const activeKey =
+    slot || (format === 'vertical' ? 'sidebar' : 'header-banner');
 
-  const containerId = `ad-container-${slotId || slot || 'default'}`;
+  const adSlot =
+    slotId ||
+    (slot && adSlots[slot]) ||
+    adSlots[activeKey] ||
+    '';
+
+  useEffect(() => {
+    if (!adSlot || adSlot.startsWith('YOUR_')) {
+      return;
+    }
+
+    try {
+      const adsWindow = window as AdSenseWindow;
+
+      (adsWindow.adsbygoogle = adsWindow.adsbygoogle || []).push({});
+    } catch (error) {
+      console.error('Google AdSense error:', error);
+    }
+  }, [adSlot]);
+
+  const containerId = `ad-container-${String(
+    slotId || slot || 'default'
+  ).replace(/[^a-zA-Z0-9-_]/g, '-')}`;
+
+  if (!adSlot || adSlot.startsWith('YOUR_')) {
+    return null;
+  }
 
   return (
     <div
       id={containerId}
-      className={`my-4 flex flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed border-slate-300 bg-slate-100/60 p-3 text-center transition-all hover:border-slate-400 ${className}`}
+      className={`my-4 flex w-full items-center justify-center overflow-hidden ${className}`}
+      aria-label="Advertisement"
     >
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-        <span>Advertisement</span>
-        <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-600">AdSense Ready</span>
-      </div>
-      <div className="mt-1 flex items-center justify-center gap-1.5 text-xs text-slate-500">
-        <span className="font-medium">{info.name}</span>
-        <span className="text-slate-400">({info.dim})</span>
-      </div>
-      {/* Container where actual Google AdSense <ins> script can be injected */}
-      <div className="ad-unit-slot hidden w-full" data-ad-slot={slot || slotId}></div>
+      <ins
+        className="adsbygoogle"
+        style={{
+          display: 'block',
+          width: '100%'
+        }}
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={adSlot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
     </div>
   );
 };
-
