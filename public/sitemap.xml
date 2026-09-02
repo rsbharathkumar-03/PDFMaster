@@ -1,98 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
-    <loc>https://pdfmaster.app/</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/pdf-to-word</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/pdf-to-word</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/word-to-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/word-to-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/compress-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/compress-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/merge-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/merge-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/split-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/split-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/pdf-to-jpg</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/pdf-to-jpg</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/jpg-to-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/jpg-to-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/pdf-to-excel</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/pdf-to-excel</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/pdf-to-ppt</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/pdf-to-ppt</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/protect-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/protect-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/unlock-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/unlock-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/rotate-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/rotate-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/watermark-pdf</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/watermark-pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/about</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/contact</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/privacy-policy</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/privacy-policy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/terms</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/terms</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
   <url>
-    <loc>https://pdfmaster.app/cookie-policy</loc>
+    <loc>https://pdf-master-ezhr.vercel.app/cookie-policy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
 </urlset>
