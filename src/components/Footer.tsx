@@ -1,28 +1,67 @@
 import React from 'react';
-import { ViewType, ToolId } from '../types';
+import { ViewType } from '../types';
 import { AdContainer } from './AdContainer';
-import { ShieldCheck, Heart, Lock, Zap, Server } from 'lucide-react';
+import {
+  ShieldCheck,
+  Lock,
+  Zap,
+  Server,
+  FileText,
+  Heart
+} from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (view: ViewType) => void;
 }
 
+const SITE_URL = 'https://pdf-master-ezhr.vercel.app';
+
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+  const navigateWithFallback = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    view: ViewType
+  ) => {
+    /*
+     * Keep normal browser links available for crawlers and users.
+     * App.tsx can still handle SPA navigation through onNavigate().
+     */
+    event.preventDefault();
+    onNavigate(view);
+  };
+
   return (
     <footer className="mt-20 border-t border-slate-200 bg-white text-slate-600">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Footer Ad Slot */}
-        <AdContainer slot="footer-banner" className="mb-10 max-w-4xl mx-auto" />
 
-        {/* Security & Value Propositions Bar */}
-        <div className="mb-12 grid grid-cols-1 gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Footer Ad */}
+        <AdContainer
+          slot="footer-banner"
+          className="mx-auto mb-10 max-w-4xl"
+        />
+
+        {/* Security & Value Propositions */}
+        <section
+          aria-labelledby="footer-benefits"
+          className="mb-12 grid grid-cols-1 gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          <h2 id="footer-benefits" className="sr-only">
+            PDFMaster Features and Benefits
+          </h2>
+
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
               <ShieldCheck className="h-5 w-5" />
             </div>
+
             <div>
-              <h4 className="text-sm font-bold text-slate-900">Zero Permanent Storage</h4>
-              <p className="text-xs text-slate-500">Your documents are processed temporarily and purged immediately.</p>
+              <h3 className="text-sm font-bold text-slate-900">
+                Privacy Focused
+              </h3>
+
+              <p className="text-xs leading-5 text-slate-500">
+                PDFMaster is designed with privacy and secure document
+                processing in mind.
+              </p>
             </div>
           </div>
 
@@ -30,9 +69,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
               <Lock className="h-5 w-5" />
             </div>
+
             <div>
-              <h4 className="text-sm font-bold text-slate-900">End-to-End Encryption</h4>
-              <p className="text-xs text-slate-500">All data transfers use TLS 1.3 encryption with strict security headers.</p>
+              <h3 className="text-sm font-bold text-slate-900">
+                Secure Processing
+              </h3>
+
+              <p className="text-xs leading-5 text-slate-500">
+                Use PDF tools through a secure web application without
+                installing desktop software.
+              </p>
             </div>
           </div>
 
@@ -40,9 +86,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
               <Zap className="h-5 w-5" />
             </div>
+
             <div>
-              <h4 className="text-sm font-bold text-slate-900">Ultra-Fast Processing</h4>
-              <p className="text-xs text-slate-500">Engineered with high-throughput streams for near-instant conversions.</p>
+              <h3 className="text-sm font-bold text-slate-900">
+                Easy to Use
+              </h3>
+
+              <p className="text-xs leading-5 text-slate-500">
+                Simple online PDF utilities for converting, compressing,
+                merging, splitting, and managing documents.
+              </p>
             </div>
           </div>
 
@@ -50,172 +103,379 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
               <Server className="h-5 w-5" />
             </div>
+
             <div>
-              <h4 className="text-sm font-bold text-slate-900">Spring Boot 3.x Ready</h4>
-              <p className="text-xs text-slate-500">Enterprise Java 17 + Apache PDFBox &amp; POI backend architecture.</p>
+              <h3 className="text-sm font-bold text-slate-900">
+                Modern Web Platform
+              </h3>
+
+              <p className="text-xs leading-5 text-slate-500">
+                Built as a modern web application with PDF processing
+                capabilities.
+              </p>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Main Footer Links */}
+        {/* Main Footer Content */}
         <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
-          {/* Brand Info */}
+
+          {/* Brand */}
           <div className="col-span-2">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-500 text-white font-black text-sm">
+            <a
+              href={`${SITE_URL}/`}
+              onClick={(event) => navigateWithFallback(event, 'home')}
+              className="inline-flex items-center gap-2.5 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              aria-label="PDFMaster - Free Online PDF Tools"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-500 text-sm font-black text-white">
                 PM
               </div>
+
               <span className="text-lg font-extrabold tracking-tight text-slate-900">
                 PDF<span className="text-indigo-600">Master</span>
               </span>
-            </div>
-            <p className="mt-3 max-w-sm text-sm text-slate-500 leading-relaxed">
-              PDFMaster is an open, free, and secure online platform for converting, compressing, merging, splitting, watermarking, and protecting PDF documents. Built with enterprise standards and privacy by design.
+            </a>
+
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
+              PDFMaster provides free online PDF tools for converting,
+              compressing, merging, splitting, rotating, watermarking, and
+              protecting PDF documents.
             </p>
-            <div className="mt-4 flex items-center gap-2">
+
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
+              Access PDF utilities directly from your web browser on desktop,
+              tablet, or mobile devices.
+            </p>
+
+            <div className="mt-4">
               <button
+                type="button"
                 onClick={() => onNavigate('backend-code')}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:border-indigo-400 hover:text-indigo-600 transition"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-400 hover:text-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
               >
+                <FileText className="h-3.5 w-3.5" />
                 <span>View Java Spring Boot Code</span>
               </button>
             </div>
           </div>
 
-          {/* Column: Convert From PDF */}
+          {/* Convert From PDF */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">Convert from PDF</h3>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+              Convert from PDF
+            </h2>
+
             <ul className="mt-3 space-y-2 text-sm">
               <li>
-                <button onClick={() => onNavigate('pdf-to-word')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/pdf-to-word`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'pdf-to-word')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   PDF to Word
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('pdf-to-jpg')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/pdf-to-jpg`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'pdf-to-jpg')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   PDF to JPG
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('pdf-to-excel')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/pdf-to-excel`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'pdf-to-excel')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   PDF to Excel
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('pdf-to-ppt')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/pdf-to-ppt`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'pdf-to-ppt')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   PDF to PowerPoint
-                </button>
+                </a>
               </li>
             </ul>
           </div>
 
-          {/* Column: Convert & Organize */}
+          {/* Convert & Organize */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">Convert &amp; Organize</h3>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+              Convert &amp; Organize
+            </h2>
+
             <ul className="mt-3 space-y-2 text-sm">
               <li>
-                <button onClick={() => onNavigate('word-to-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/word-to-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'word-to-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Word to PDF
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('jpg-to-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/jpg-to-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'jpg-to-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   JPG to PDF
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('merge-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/merge-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'merge-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Merge PDF
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('split-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/split-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'split-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Split PDF
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('compress-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/compress-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'compress-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Compress PDF
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('rotate-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/rotate-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'rotate-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Rotate PDF
-                </button>
+                </a>
               </li>
             </ul>
           </div>
 
-          {/* Column: Security & Company */}
+          {/* Security & Legal */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">Security &amp; Legal</h3>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+              Security &amp; Legal
+            </h2>
+
             <ul className="mt-3 space-y-2 text-sm">
               <li>
-                <button onClick={() => onNavigate('protect-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/protect-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'protect-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Protect PDF
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('unlock-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/unlock-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'unlock-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Unlock PDF
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('watermark-pdf')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/watermark-pdf`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'watermark-pdf')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Watermark PDF
-                </button>
+                </a>
               </li>
-              <li className="pt-2 border-t border-slate-100">
-                <button onClick={() => onNavigate('about')} className="hover:text-indigo-600 transition">
-                  About Us
-                </button>
+
+              <li className="border-t border-slate-100 pt-2">
+                <a
+                  href={`${SITE_URL}/about`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'about')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
+                  About PDFMaster
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('contact')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/contact`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'contact')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Contact
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('privacy-policy')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/privacy-policy`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'privacy-policy')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Privacy Policy
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('terms')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/terms`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'terms')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Terms of Service
-                </button>
+                </a>
               </li>
+
               <li>
-                <button onClick={() => onNavigate('cookie-policy')} className="hover:text-indigo-600 transition">
+                <a
+                  href={`${SITE_URL}/cookie-policy`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'cookie-policy')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
                   Cookie Policy
-                </button>
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href={`${SITE_URL}/blog`}
+                  onClick={(event) =>
+                    navigateWithFallback(event, 'blog')
+                  }
+                  className="transition hover:text-indigo-600"
+                >
+                  PDF Guides
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom copyright & attribution */}
-        <div className="mt-12 flex flex-col items-center justify-between border-t border-slate-200 pt-8 sm:flex-row gap-4">
+        {/* Bottom */}
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-8 sm:flex-row">
           <p className="text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} PDFMaster. All rights reserved. Free Online PDF Utility Platform.
+            &copy; {new Date().getFullYear()} PDFMaster. All rights reserved.
+            Free Online PDF Tools.
           </p>
-          <div className="flex items-center gap-4 text-xs text-slate-500">
-            <button onClick={() => onNavigate('privacy-policy')} className="hover:underline">
+
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-500">
+            <a
+              href={`${SITE_URL}/privacy-policy`}
+              onClick={(event) =>
+                navigateWithFallback(event, 'privacy-policy')
+              }
+              className="hover:text-indigo-600 hover:underline"
+            >
               Privacy
-            </button>
-            <span>&bull;</span>
-            <button onClick={() => onNavigate('terms')} className="hover:underline">
+            </a>
+
+            <span aria-hidden="true">&bull;</span>
+
+            <a
+              href={`${SITE_URL}/terms`}
+              onClick={(event) =>
+                navigateWithFallback(event, 'terms')
+              }
+              className="hover:text-indigo-600 hover:underline"
+            >
               Terms
-            </button>
-            <span>&bull;</span>
-            <button onClick={() => onNavigate('cookie-policy')} className="hover:underline">
+            </a>
+
+            <span aria-hidden="true">&bull;</span>
+
+            <a
+              href={`${SITE_URL}/cookie-policy`}
+              onClick={(event) =>
+                navigateWithFallback(event, 'cookie-policy')
+              }
+              className="hover:text-indigo-600 hover:underline"
+            >
               Cookies
-            </button>
-            <span>&bull;</span>
-            <button onClick={() => onNavigate('blog')} className="hover:underline">
+            </a>
+
+            <span aria-hidden="true">&bull;</span>
+
+            <a
+              href={`${SITE_URL}/blog`}
+              onClick={(event) =>
+                navigateWithFallback(event, 'blog')
+              }
+              className="hover:text-indigo-600 hover:underline"
+            >
               PDF Guides
-            </button>
+            </a>
           </div>
+        </div>
+
+        {/* Small Footer Note */}
+        <div className="mt-6 flex items-center justify-center gap-1.5 text-center text-xs text-slate-400">
+          <Heart className="h-3.5 w-3.5" />
+          <span>PDF tools made simple for everyone.</span>
         </div>
       </div>
     </footer>
