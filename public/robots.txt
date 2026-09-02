@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://pdfmaster.app/sitemap.xml
+Sitemap: https://pdf-master-ezhr.vercel.app/sitemap.xml
