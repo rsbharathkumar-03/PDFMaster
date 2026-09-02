@@ -46,6 +46,12 @@ interface ToolViewProps {
 
 const SITE_URL = 'https://pdf-master-ezhr.vercel.app';
 
+const HOME_TITLE =
+  'Free Online PDF Tools - Merge, Compress, Split & Convert PDF | PDFMaster';
+
+const HOME_DESCRIPTION =
+  'PDFMaster offers free online PDF tools to merge, split, compress, convert, rotate, watermark, and protect PDF files quickly and easily.';
+
 export const ToolView: React.FC<ToolViewProps> = ({
   tool,
   onBack,
@@ -53,31 +59,37 @@ export const ToolView: React.FC<ToolViewProps> = ({
   onSelectOtherTool
 }) => {
   const handleNavToOtherTool = (id: any) => {
-    if (onNavigateTool) onNavigateTool(id);
-    else if (onSelectOtherTool) onSelectOtherTool(id);
+    if (onNavigateTool) {
+      onNavigateTool(id);
+    } else if (onSelectOtherTool) {
+      onSelectOtherTool(id);
+    }
   };
 
   /*
    * ============================================================
-   * SEO: Dynamic title, description, canonical and structured data
+   * SEO METADATA
    * ============================================================
    *
-   * Every PDF tool gets its own SEO information.
+   * Every PDF tool receives its own:
    *
-   * Example:
-   * /merge-pdf
-   * Title -> Merge PDF - Combine Multiple PDF Files Online for Free | PDFMaster
-   *
-   * /compress-pdf
-   * Title -> Compress PDF - Reduce PDF File Size Online | PDFMaster
+   * - Title
+   * - Meta description
+   * - Canonical URL
+   * - Open Graph metadata
+   * - Twitter metadata
+   * - WebApplication structured data
+   * - Breadcrumb structured data
    */
   useEffect(() => {
     const pageUrl = `${SITE_URL}/${tool.id}`;
 
-    // Update browser title
+    // ----------------------------------------------------------
+    // Basic SEO
+    // ----------------------------------------------------------
+
     document.title = tool.seoTitle;
 
-    // Helper for creating/updating meta tags
     const setMetaTag = (
       attribute: 'name' | 'property',
       key: string,
@@ -96,42 +108,94 @@ export const ToolView: React.FC<ToolViewProps> = ({
       element.setAttribute('content', content);
     };
 
-    // Basic SEO
-    setMetaTag('name', 'description', tool.metaDesc);
-    setMetaTag('name', 'robots', 'index, follow');
+    setMetaTag(
+      'name',
+      'description',
+      tool.metaDesc
+    );
 
+    setMetaTag(
+      'name',
+      'robots',
+      'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+    );
+
+    // ----------------------------------------------------------
     // Open Graph
-    setMetaTag('property', 'og:title', tool.seoTitle);
-    setMetaTag('property', 'og:description', tool.metaDesc);
-    setMetaTag('property', 'og:type', 'website');
-    setMetaTag('property', 'og:url', pageUrl);
-    setMetaTag('property', 'og:site_name', 'PDFMaster');
+    // ----------------------------------------------------------
 
-    // Twitter
-    setMetaTag('name', 'twitter:card', 'summary');
-    setMetaTag('name', 'twitter:title', tool.seoTitle);
-    setMetaTag('name', 'twitter:description', tool.metaDesc);
+    setMetaTag(
+      'property',
+      'og:title',
+      tool.seoTitle
+    );
 
+    setMetaTag(
+      'property',
+      'og:description',
+      tool.metaDesc
+    );
+
+    setMetaTag(
+      'property',
+      'og:type',
+      'website'
+    );
+
+    setMetaTag(
+      'property',
+      'og:url',
+      pageUrl
+    );
+
+    setMetaTag(
+      'property',
+      'og:site_name',
+      'PDFMaster'
+    );
+
+    // ----------------------------------------------------------
+    // Twitter / X
+    // ----------------------------------------------------------
+
+    setMetaTag(
+      'name',
+      'twitter:card',
+      'summary'
+    );
+
+    setMetaTag(
+      'name',
+      'twitter:title',
+      tool.seoTitle
+    );
+
+    setMetaTag(
+      'name',
+      'twitter:description',
+      tool.metaDesc
+    );
+
+    // ----------------------------------------------------------
     // Canonical URL
+    // ----------------------------------------------------------
+
     let canonical = document.head.querySelector(
       'link[rel="canonical"]'
     ) as HTMLLinkElement | null;
 
     if (!canonical) {
       canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
+      canonical.rel = 'canonical';
       document.head.appendChild(canonical);
     }
 
-    canonical.setAttribute('href', pageUrl);
+    canonical.href = pageUrl;
 
-    /*
-     * ============================================================
-     * WebApplication Structured Data
-     * ============================================================
-     *
-     * Helps search engines understand that this is an online tool.
-     */
+    // ----------------------------------------------------------
+    // WebApplication Structured Data
+    // ----------------------------------------------------------
+
     const applicationSchema = {
       '@context': 'https://schema.org',
       '@type': 'WebApplication',
@@ -154,18 +218,23 @@ export const ToolView: React.FC<ToolViewProps> = ({
 
     if (!applicationScript) {
       applicationScript = document.createElement('script');
-      applicationScript.id = 'pdfmaster-tool-schema';
-      applicationScript.type = 'application/ld+json';
-      document.head.appendChild(applicationScript);
+      applicationScript.id =
+        'pdfmaster-tool-schema';
+      applicationScript.type =
+        'application/ld+json';
+
+      document.head.appendChild(
+        applicationScript
+      );
     }
 
-    applicationScript.textContent = JSON.stringify(applicationSchema);
+    applicationScript.textContent =
+      JSON.stringify(applicationSchema);
 
-    /*
-     * ============================================================
-     * Breadcrumb Structured Data
-     * ============================================================
-     */
+    // ----------------------------------------------------------
+    // Breadcrumb Structured Data
+    // ----------------------------------------------------------
+
     const breadcrumbSchema = {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
@@ -179,89 +248,186 @@ export const ToolView: React.FC<ToolViewProps> = ({
         {
           '@type': 'ListItem',
           position: 2,
+          name: 'PDF Tools',
+          item: `${SITE_URL}/`
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
           name: tool.title,
           item: pageUrl
         }
       ]
     };
 
-    let breadcrumbScript = document.getElementById(
-      'pdfmaster-breadcrumb-schema'
-    ) as HTMLScriptElement | null;
+    let breadcrumbScript =
+      document.getElementById(
+        'pdfmaster-breadcrumb-schema'
+      ) as HTMLScriptElement | null;
 
     if (!breadcrumbScript) {
-      breadcrumbScript = document.createElement('script');
-      breadcrumbScript.id = 'pdfmaster-breadcrumb-schema';
-      breadcrumbScript.type = 'application/ld+json';
-      document.head.appendChild(breadcrumbScript);
+      breadcrumbScript =
+        document.createElement('script');
+
+      breadcrumbScript.id =
+        'pdfmaster-breadcrumb-schema';
+
+      breadcrumbScript.type =
+        'application/ld+json';
+
+      document.head.appendChild(
+        breadcrumbScript
+      );
     }
 
-    breadcrumbScript.textContent = JSON.stringify(breadcrumbSchema);
+    breadcrumbScript.textContent =
+      JSON.stringify(breadcrumbSchema);
 
     /*
-     * Cleanup when leaving the tool page.
-     *
-     * The homepage SEO information from index.html will be restored
-     * when another page is displayed.
+     * Restore homepage metadata when leaving
+     * the tool page.
      */
     return () => {
-      document.title = 'PDFMaster - Free Online PDF Tools & Converter';
+      document.title = HOME_TITLE;
 
-      const description = document.head.querySelector(
-        'meta[name="description"]'
-      ) as HTMLMetaElement | null;
+      const description =
+        document.head.querySelector(
+          'meta[name="description"]'
+        ) as HTMLMetaElement | null;
 
       if (description) {
-        description.setAttribute(
-          'content',
-          'Convert, compress, merge, split, watermark, rotate, and protect your PDF files quickly, easily, and securely. 100% Free online PDF editor.'
-        );
+        description.content =
+          HOME_DESCRIPTION;
       }
 
-      const canonicalElement = document.head.querySelector(
-        'link[rel="canonical"]'
-      ) as HTMLLinkElement | null;
+      const robots =
+        document.head.querySelector(
+          'meta[name="robots"]'
+        ) as HTMLMetaElement | null;
+
+      if (robots) {
+        robots.content =
+          'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+      }
+
+      const canonicalElement =
+        document.head.querySelector(
+          'link[rel="canonical"]'
+        ) as HTMLLinkElement | null;
 
       if (canonicalElement) {
-        canonicalElement.setAttribute('href', `${SITE_URL}/`);
+        canonicalElement.href =
+          `${SITE_URL}/`;
       }
 
-      const ogUrl = document.head.querySelector(
-        'meta[property="og:url"]'
-      ) as HTMLMetaElement | null;
+      const ogTitle =
+        document.head.querySelector(
+          'meta[property="og:title"]'
+        ) as HTMLMetaElement | null;
+
+      if (ogTitle) {
+        ogTitle.content =
+          'Free Online PDF Tools - PDFMaster';
+      }
+
+      const ogDescription =
+        document.head.querySelector(
+          'meta[property="og:description"]'
+        ) as HTMLMetaElement | null;
+
+      if (ogDescription) {
+        ogDescription.content =
+          HOME_DESCRIPTION;
+      }
+
+      const ogUrl =
+        document.head.querySelector(
+          'meta[property="og:url"]'
+        ) as HTMLMetaElement | null;
 
       if (ogUrl) {
-        ogUrl.setAttribute('content', `${SITE_URL}/`);
+        ogUrl.content =
+          `${SITE_URL}/`;
       }
+
+      const twitterTitle =
+        document.head.querySelector(
+          'meta[name="twitter:title"]'
+        ) as HTMLMetaElement | null;
+
+      if (twitterTitle) {
+        twitterTitle.content =
+          'Free Online PDF Tools - PDFMaster';
+      }
+
+      const twitterDescription =
+        document.head.querySelector(
+          'meta[name="twitter:description"]'
+        ) as HTMLMetaElement | null;
+
+      if (twitterDescription) {
+        twitterDescription.content =
+          HOME_DESCRIPTION;
+      }
+
+      // Remove tool-specific structured data.
+      document
+        .getElementById(
+          'pdfmaster-tool-schema'
+        )
+        ?.remove();
+
+      document
+        .getElementById(
+          'pdfmaster-breadcrumb-schema'
+        )
+        ?.remove();
     };
   }, [tool]);
 
-  const [files, setFiles] = useState<File[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [result, setResult] = useState<ProcessingResult | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [files, setFiles] =
+    useState<File[]>([]);
+
+  const [isProcessing, setIsProcessing] =
+    useState(false);
+
+  const [progress, setProgress] =
+    useState(0);
+
+  const [result, setResult] =
+    useState<ProcessingResult | null>(null);
+
+  const [errorMsg, setErrorMsg] =
+    useState<string | null>(null);
 
   // Tool specific states
-  const [splitConfig, setSplitConfig] = useState<SplitConfig>({
-    mode: 'range',
-    pageRanges: '1-3'
-  });
+
+  const [splitConfig, setSplitConfig] =
+    useState<SplitConfig>({
+      mode: 'range',
+      pageRanges: '1-3'
+    });
 
   const [compressConfig, setCompressConfig] =
     useState<CompressConfig>({
       level: 'medium'
     });
 
-  const [protectPassword, setProtectPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [unlockPassword, setUnlockPassword] = useState('');
+  const [protectPassword, setProtectPassword] =
+    useState('');
 
-  const [rotateConfig, setRotateConfig] = useState<RotateConfig>({
-    angle: 90,
-    target: 'all',
-    pageNumbers: ''
-  });
+  const [confirmPassword, setConfirmPassword] =
+    useState('');
+
+  const [unlockPassword, setUnlockPassword] =
+    useState('');
+
+  const [rotateConfig, setRotateConfig] =
+    useState<RotateConfig>({
+      angle: 90,
+      target: 'all',
+      pageNumbers: ''
+    });
 
   const [watermarkConfig, setWatermarkConfig] =
     useState<WatermarkConfig>({
@@ -275,18 +441,27 @@ export const ToolView: React.FC<ToolViewProps> = ({
 
   const handleProcess = async () => {
     if (files.length === 0) {
-      setErrorMsg('Please upload at least one file to proceed.');
+      setErrorMsg(
+        'Please upload at least one file to proceed.'
+      );
       return;
     }
 
-    // Validation for specific tools
+    // Protect PDF validation
     if (tool.id === 'protect-pdf') {
-      if (!protectPassword || protectPassword.length < 4) {
-        setErrorMsg('Password must be at least 4 characters long.');
+      if (
+        !protectPassword ||
+        protectPassword.length < 4
+      ) {
+        setErrorMsg(
+          'Password must be at least 4 characters long.'
+        );
         return;
       }
 
-      if (protectPassword !== confirmPassword) {
+      if (
+        protectPassword !== confirmPassword
+      ) {
         setErrorMsg(
           'Passwords do not match. Please verify your password.'
         );
@@ -294,6 +469,7 @@ export const ToolView: React.FC<ToolViewProps> = ({
       }
     }
 
+    // Split PDF validation
     if (
       tool.id === 'split-pdf' &&
       splitConfig.mode === 'range' &&
@@ -314,23 +490,38 @@ export const ToolView: React.FC<ToolViewProps> = ({
 
       switch (tool.id) {
         case 'pdf-to-word':
-          res = await convertPdfToWord(files[0], setProgress);
+          res = await convertPdfToWord(
+            files[0],
+            setProgress
+          );
           break;
 
         case 'word-to-pdf':
-          res = await convertWordToPdf(files[0], setProgress);
+          res = await convertWordToPdf(
+            files[0],
+            setProgress
+          );
           break;
 
         case 'pdf-to-jpg':
-          res = await convertPdfToJpg(files[0], setProgress);
+          res = await convertPdfToJpg(
+            files[0],
+            setProgress
+          );
           break;
 
         case 'jpg-to-pdf':
-          res = await convertJpgToPdf(files, setProgress);
+          res = await convertJpgToPdf(
+            files,
+            setProgress
+          );
           break;
 
         case 'merge-pdf':
-          res = await mergePdfs(files, setProgress);
+          res = await mergePdfs(
+            files,
+            setProgress
+          );
           break;
 
         case 'split-pdf':
@@ -396,12 +587,17 @@ export const ToolView: React.FC<ToolViewProps> = ({
           break;
 
         default:
-          throw new Error('Unsupported tool operation');
+          throw new Error(
+            'Unsupported tool operation'
+          );
       }
 
       setResult(res);
     } catch (err: any) {
-      console.error('Processing error:', err);
+      console.error(
+        'Processing error:',
+        err
+      );
 
       setErrorMsg(
         err.message ||
@@ -418,13 +614,16 @@ export const ToolView: React.FC<ToolViewProps> = ({
       result.downloadUrl &&
       result.fileName
     ) {
-      const a = document.createElement('a');
+      const a =
+        document.createElement('a');
 
       a.href = result.downloadUrl;
       a.download = result.fileName;
 
       document.body.appendChild(a);
+
       a.click();
+
       document.body.removeChild(a);
     }
   };
@@ -445,7 +644,7 @@ export const ToolView: React.FC<ToolViewProps> = ({
         className="max-w-4xl mx-auto"
       />
 
-      {/* Navigation Breadcrumb */}
+      {/* Breadcrumb Navigation */}
       <div className="mb-6 flex items-center justify-between">
 
         <button
@@ -455,16 +654,28 @@ export const ToolView: React.FC<ToolViewProps> = ({
         >
           <ArrowLeft className="h-4 w-4" />
 
-          <span>Back to All Tools</span>
+          <span>
+            Back to All Tools
+          </span>
         </button>
 
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-slate-400"
         >
-          <span>Home</span>
+          <button
+            type="button"
+            onClick={() =>
+              handleNavToOtherTool('home')
+            }
+            className="hover:text-indigo-600 transition"
+          >
+            Home
+          </button>
 
-          <span>/</span>
+          <span aria-hidden="true">
+            /
+          </span>
 
           <span
             aria-current="page"
@@ -491,10 +702,14 @@ export const ToolView: React.FC<ToolViewProps> = ({
         <p className="mx-auto mt-3 max-w-2xl text-base text-slate-600">
           {tool.longDesc}
         </p>
+
       </header>
 
       {/* Main Interactive Processing Card */}
-      <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm">
+      <section
+        className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm"
+        aria-label={`${tool.title} file processing`}
+      >
 
         {!result ? (
           <div>
@@ -503,9 +718,15 @@ export const ToolView: React.FC<ToolViewProps> = ({
             <FileUploader
               files={files}
               onFilesChange={setFiles}
-              acceptedFormats={tool.acceptedFormats}
-              acceptMimeTypes={tool.acceptMimeTypes}
-              multiple={tool.multipleFiles}
+              acceptedFormats={
+                tool.acceptedFormats
+              }
+              acceptMimeTypes={
+                tool.acceptMimeTypes
+              }
+              multiple={
+                tool.multipleFiles
+              }
               label={
                 tool.multipleFiles
                   ? 'Select multiple files'
@@ -516,503 +737,615 @@ export const ToolView: React.FC<ToolViewProps> = ({
 
             {/* Error Message */}
             {errorMsg && (
-              <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              <div
+                className="mt-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                role="alert"
+              >
                 <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" />
 
-                <span>{errorMsg}</span>
+                <span>
+                  {errorMsg}
+                </span>
               </div>
             )}
 
-            {/* Tool Specific Configuration Panels */}
-            {files.length > 0 && !isProcessing && (
-              <div className="mt-6 border-t border-slate-100 pt-6">
+            {/* Tool Specific Configuration */}
+            {files.length > 0 &&
+              !isProcessing && (
+                <div className="mt-6 border-t border-slate-100 pt-6">
 
-                <div className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800">
-                  <Sliders className="h-4 w-4 text-indigo-600" />
+                  <div className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800">
+                    <Sliders className="h-4 w-4 text-indigo-600" />
 
-                  <span>Tool Settings</span>
-                </div>
-
-                {/* Compress Settings */}
-                {tool.id === 'compress-pdf' && (
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-
-                    {[
-                      {
-                        level: 'low',
-                        title: 'Low Compression',
-                        desc: 'Slight reduction, maximum image fidelity.'
-                      },
-                      {
-                        level: 'medium',
-                        title: 'Recommended',
-                        desc: 'Balanced compression with sharp text.'
-                      },
-                      {
-                        level: 'high',
-                        title: 'High Compression',
-                        desc: 'Maximum size savings for email sending.'
-                      }
-                    ].map((opt) => (
-                      <button
-                        key={opt.level}
-                        type="button"
-                        onClick={() =>
-                          setCompressConfig({
-                            level: opt.level as any
-                          })
-                        }
-                        className={`rounded-2xl border p-4 text-left transition-all ${
-                          compressConfig.level === opt.level
-                            ? 'border-indigo-600 bg-indigo-50/70 shadow-sm ring-2 ring-indigo-500/20'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="text-sm font-bold text-slate-900">
-                          {opt.title}
-                        </div>
-
-                        <div className="mt-1 text-xs text-slate-500">
-                          {opt.desc}
-                        </div>
-                      </button>
-                    ))}
+                    <span>
+                      Tool Settings
+                    </span>
                   </div>
-                )}
 
-                {/* Split Settings */}
-                {tool.id === 'split-pdf' && (
-                  <div className="space-y-4">
+                  {/* Compress Settings */}
+                  {tool.id ===
+                    'compress-pdf' && (
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
 
-                    <div className="flex flex-wrap gap-4">
-
-                      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="splitMode"
-                          checked={
-                            splitConfig.mode === 'range'
+                      {[
+                        {
+                          level: 'low',
+                          title:
+                            'Low Compression',
+                          desc:
+                            'Slight reduction, maximum image fidelity.'
+                        },
+                        {
+                          level: 'medium',
+                          title:
+                            'Recommended',
+                          desc:
+                            'Balanced compression with sharp text.'
+                        },
+                        {
+                          level: 'high',
+                          title:
+                            'High Compression',
+                          desc:
+                            'Maximum size savings for email sending.'
+                        }
+                      ].map((opt) => (
+                        <button
+                          key={opt.level}
+                          type="button"
+                          onClick={() =>
+                            setCompressConfig(
+                              {
+                                level:
+                                  opt.level as any
+                              }
+                            )
                           }
-                          onChange={() =>
-                            setSplitConfig({
-                              ...splitConfig,
-                              mode: 'range'
-                            })
-                          }
-                          className="h-4 w-4 text-indigo-600"
-                        />
+                          className={`rounded-2xl border p-4 text-left transition-all ${
+                            compressConfig.level ===
+                            opt.level
+                              ? 'border-indigo-600 bg-indigo-50/70 shadow-sm ring-2 ring-indigo-500/20'
+                              : 'border-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="text-sm font-bold text-slate-900">
+                            {opt.title}
+                          </div>
 
-                        <span>
-                          Extract specific page range
-                        </span>
-                      </label>
+                          <div className="mt-1 text-xs text-slate-500">
+                            {opt.desc}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-                      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="splitMode"
-                          checked={
-                            splitConfig.mode === 'all'
-                          }
-                          onChange={() =>
-                            setSplitConfig({
-                              ...splitConfig,
-                              mode: 'all'
-                            })
-                          }
-                          className="h-4 w-4 text-indigo-600"
-                        />
+                  {/* Split Settings */}
+                  {tool.id ===
+                    'split-pdf' && (
+                    <div className="space-y-4">
 
-                        <span>
-                          Extract all pages into separate PDFs (ZIP)
-                        </span>
-                      </label>
+                      <div className="flex flex-wrap gap-4">
+
+                        <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="splitMode"
+                            checked={
+                              splitConfig.mode ===
+                              'range'
+                            }
+                            onChange={() =>
+                              setSplitConfig(
+                                {
+                                  ...splitConfig,
+                                  mode: 'range'
+                                }
+                              )
+                            }
+                            className="h-4 w-4 text-indigo-600"
+                          />
+
+                          <span>
+                            Extract specific page range
+                          </span>
+                        </label>
+
+                        <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="splitMode"
+                            checked={
+                              splitConfig.mode ===
+                              'all'
+                            }
+                            onChange={() =>
+                              setSplitConfig(
+                                {
+                                  ...splitConfig,
+                                  mode: 'all'
+                                }
+                              )
+                            }
+                            className="h-4 w-4 text-indigo-600"
+                          />
+
+                          <span>
+                            Extract all pages into separate PDFs (ZIP)
+                          </span>
+                        </label>
+
+                      </div>
+
+                      {splitConfig.mode ===
+                        'range' && (
+                        <div className="mt-2">
+
+                          <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                            Page Ranges (e.g. 1-3, 5, 8-10)
+                          </label>
+
+                          <input
+                            type="text"
+                            value={
+                              splitConfig.pageRanges
+                            }
+                            onChange={(e) =>
+                              setSplitConfig(
+                                {
+                                  ...splitConfig,
+                                  pageRanges:
+                                    e.target.value
+                                }
+                              )
+                            }
+                            placeholder="e.g. 1-3, 5"
+                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none"
+                          />
+
+                        </div>
+                      )}
 
                     </div>
+                  )}
 
-                    {splitConfig.mode === 'range' && (
-                      <div className="mt-2">
+                  {/* Protect Password Settings */}
+                  {tool.id ===
+                    'protect-pdf' && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
+                      <div>
                         <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                          Page Ranges (e.g. 1-3, 5, 8-10)
+                          Set Password
+                        </label>
+
+                        <input
+                          type="password"
+                          value={
+                            protectPassword
+                          }
+                          onChange={(e) =>
+                            setProtectPassword(
+                              e.target.value
+                            )
+                          }
+                          placeholder="Enter password..."
+                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                          Confirm Password
+                        </label>
+
+                        <input
+                          type="password"
+                          value={
+                            confirmPassword
+                          }
+                          onChange={(e) =>
+                            setConfirmPassword(
+                              e.target.value
+                            )
+                          }
+                          placeholder="Re-enter password..."
+                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="col-span-full rounded-xl bg-amber-50 p-3 text-xs text-amber-800 border border-amber-200">
+                        <strong>
+                          Privacy Notice:
+                        </strong>{' '}
+                        Your password is used for in-memory encryption only. We never save, log, or transmit your password anywhere.
+                      </div>
+
+                    </div>
+                  )}
+
+                  {/* Unlock Password Settings */}
+                  {tool.id ===
+                    'unlock-pdf' && (
+                    <div className="max-w-md">
+
+                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                        Document Password (if known)
+                      </label>
+
+                      <input
+                        type="password"
+                        value={
+                          unlockPassword
+                        }
+                        onChange={(e) =>
+                          setUnlockPassword(
+                            e.target.value
+                          )
+                        }
+                        placeholder="Enter password to unlock..."
+                        className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none"
+                      />
+
+                      <p className="mt-1 text-xs text-slate-500">
+                        This removes encryption locks and restrictions with the authorized password.
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* Rotate Settings */}
+                  {tool.id ===
+                    'rotate-pdf' && (
+                    <div className="space-y-4">
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-2">
+                          Rotation Angle
+                        </label>
+
+                        <div className="flex flex-wrap gap-3">
+
+                          {[
+                            {
+                              angle: 90,
+                              label:
+                                '90° Clockwise'
+                            },
+                            {
+                              angle: 180,
+                              label:
+                                '180° Flip'
+                            },
+                            {
+                              angle: 270,
+                              label:
+                                '270° Counter-Clockwise'
+                            }
+                          ].map(
+                            (item) => (
+                              <button
+                                key={
+                                  item.angle
+                                }
+                                type="button"
+                                onClick={() =>
+                                  setRotateConfig(
+                                    {
+                                      ...rotateConfig,
+                                      angle:
+                                        item.angle as any
+                                    }
+                                  )
+                                }
+                                className={`rounded-xl border px-4 py-2 text-xs font-bold transition-all ${
+                                  rotateConfig.angle ===
+                                  item.angle
+                                    ? 'border-indigo-600 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-500/20'
+                                    : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                                }`}
+                              >
+                                {
+                                  item.label
+                                }
+                              </button>
+                            )
+                          )}
+
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-700">
+
+                        <label className="flex items-center gap-1.5 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="rotTarget"
+                            checked={
+                              rotateConfig.target ===
+                              'all'
+                            }
+                            onChange={() =>
+                              setRotateConfig(
+                                {
+                                  ...rotateConfig,
+                                  target: 'all'
+                                }
+                              )
+                            }
+                          />
+
+                          <span>
+                            Rotate all pages
+                          </span>
+                        </label>
+
+                        <label className="flex items-center gap-1.5 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="rotTarget"
+                            checked={
+                              rotateConfig.target ===
+                              'custom'
+                            }
+                            onChange={() =>
+                              setRotateConfig(
+                                {
+                                  ...rotateConfig,
+                                  target:
+                                    'custom'
+                                }
+                              )
+                            }
+                          />
+
+                          <span>
+                            Specific pages (e.g. 1, 3, 5)
+                          </span>
+                        </label>
+
+                      </div>
+
+                      {rotateConfig.target ===
+                        'custom' && (
+                        <input
+                          type="text"
+                          placeholder="e.g. 1, 3, 5"
+                          value={
+                            rotateConfig.pageNumbers
+                          }
+                          onChange={(e) =>
+                            setRotateConfig(
+                              {
+                                ...rotateConfig,
+                                pageNumbers:
+                                  e.target.value
+                              }
+                            )
+                          }
+                          className="w-full max-w-sm rounded-xl border border-slate-300 px-3.5 py-2 text-sm"
+                        />
+                      )}
+
+                    </div>
+                  )}
+
+                  {/* Watermark Settings */}
+                  {tool.id ===
+                    'watermark-pdf' && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                          Watermark Text
                         </label>
 
                         <input
                           type="text"
-                          value={splitConfig.pageRanges}
+                          value={
+                            watermarkConfig.text
+                          }
                           onChange={(e) =>
-                            setSplitConfig({
-                              ...splitConfig,
-                              pageRanges: e.target.value
-                            })
+                            setWatermarkConfig(
+                              {
+                                ...watermarkConfig,
+                                text:
+                                  e.target.value
+                              }
+                            )
                           }
-                          placeholder="e.g. 1-3, 5"
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none"
+                          placeholder="e.g. CONFIDENTIAL"
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
                         />
-
                       </div>
-                    )}
 
-                  </div>
-                )}
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                          Font Size ({watermarkConfig.fontSize}pt)
+                        </label>
 
-                {/* Protect Password Settings */}
-                {tool.id === 'protect-pdf' && (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                        Set Password
-                      </label>
-
-                      <input
-                        type="password"
-                        value={protectPassword}
-                        onChange={(e) =>
-                          setProtectPassword(e.target.value)
-                        }
-                        placeholder="Enter password..."
-                        className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                        Confirm Password
-                      </label>
-
-                      <input
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) =>
-                          setConfirmPassword(e.target.value)
-                        }
-                        placeholder="Re-enter password..."
-                        className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="col-span-full rounded-xl bg-amber-50 p-3 text-xs text-amber-800 border border-amber-200">
-                      <strong>Privacy Notice:</strong> Your password is used for in-memory encryption only. We never save, log, or transmit your password anywhere.
-                    </div>
-
-                  </div>
-                )}
-
-                {/* Unlock Password Settings */}
-                {tool.id === 'unlock-pdf' && (
-                  <div className="max-w-md">
-
-                    <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                      Document Password (if known)
-                    </label>
-
-                    <input
-                      type="password"
-                      value={unlockPassword}
-                      onChange={(e) =>
-                        setUnlockPassword(e.target.value)
-                      }
-                      placeholder="Enter password to unlock..."
-                      className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none"
-                    />
-
-                    <p className="mt-1 text-xs text-slate-500">
-                      This removes encryption locks and restrictions with the authorized password.
-                    </p>
-
-                  </div>
-                )}
-
-                {/* Rotate Settings */}
-                {tool.id === 'rotate-pdf' && (
-                  <div className="space-y-4">
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-2">
-                        Rotation Angle
-                      </label>
-
-                      <div className="flex gap-3">
-
-                        {[
-                          {
-                            angle: 90,
-                            label: '90° Clockwise'
-                          },
-                          {
-                            angle: 180,
-                            label: '180° Flip'
-                          },
-                          {
-                            angle: 270,
-                            label: '270° Counter-Clockwise'
+                        <input
+                          type="range"
+                          min="16"
+                          max="72"
+                          value={
+                            watermarkConfig.fontSize
                           }
-                        ].map((item) => (
-                          <button
-                            key={item.angle}
-                            type="button"
-                            onClick={() =>
-                              setRotateConfig({
-                                ...rotateConfig,
-                                angle: item.angle as any
-                              })
+                          onChange={(e) =>
+                            setWatermarkConfig(
+                              {
+                                ...watermarkConfig,
+                                fontSize:
+                                  parseInt(
+                                    e.target.value
+                                  )
+                              }
+                            )
+                          }
+                          className="w-full"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                          Opacity ({Math.round(watermarkConfig.opacity * 100)}%)
+                        </label>
+
+                        <input
+                          type="range"
+                          min="0.1"
+                          max="1.0"
+                          step="0.05"
+                          value={
+                            watermarkConfig.opacity
+                          }
+                          onChange={(e) =>
+                            setWatermarkConfig(
+                              {
+                                ...watermarkConfig,
+                                opacity:
+                                  parseFloat(
+                                    e.target.value
+                                  )
+                              }
+                            )
+                          }
+                          className="w-full"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                          Rotation Angle ({watermarkConfig.rotation}°)
+                        </label>
+
+                        <input
+                          type="range"
+                          min="-90"
+                          max="90"
+                          step="5"
+                          value={
+                            watermarkConfig.rotation
+                          }
+                          onChange={(e) =>
+                            setWatermarkConfig(
+                              {
+                                ...watermarkConfig,
+                                rotation:
+                                  parseInt(
+                                    e.target.value
+                                  )
+                              }
+                            )
+                          }
+                          className="w-full"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                          Position
+                        </label>
+
+                        <select
+                          value={
+                            watermarkConfig.position
+                          }
+                          onChange={(e) =>
+                            setWatermarkConfig(
+                              {
+                                ...watermarkConfig,
+                                position:
+                                  e.target.value as any
+                              }
+                            )
+                          }
+                          className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
+                        >
+                          <option value="center">
+                            Center
+                          </option>
+
+                          <option value="top-left">
+                            Top-Left
+                          </option>
+
+                          <option value="top-right">
+                            Top-Right
+                          </option>
+
+                          <option value="bottom-left">
+                            Bottom-Left
+                          </option>
+
+                          <option value="bottom-right">
+                            Bottom-Right
+                          </option>
+
+                          <option value="diagonal">
+                            Diagonal
+                          </option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                          Color
+                        </label>
+
+                        <div className="flex items-center gap-2">
+
+                          <input
+                            type="color"
+                            value={
+                              watermarkConfig.color
                             }
-                            className={`rounded-xl border px-4 py-2 text-xs font-bold transition-all ${
-                              rotateConfig.angle === item.angle
-                                ? 'border-indigo-600 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-500/20'
-                                : 'border-slate-200 text-slate-700 hover:bg-slate-50'
-                            }`}
-                          >
-                            {item.label}
-                          </button>
-                        ))}
+                            onChange={(e) =>
+                              setWatermarkConfig(
+                                {
+                                  ...watermarkConfig,
+                                  color:
+                                    e.target.value
+                                }
+                              )
+                            }
+                            className="h-9 w-12 rounded border cursor-pointer"
+                          />
 
+                          <span className="text-xs font-mono text-slate-600">
+                            {
+                              watermarkConfig.color
+                            }
+                          </span>
+
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 text-xs font-semibold text-slate-700">
-
-                      <label className="flex items-center gap-1.5 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="rotTarget"
-                          checked={
-                            rotateConfig.target === 'all'
-                          }
-                          onChange={() =>
-                            setRotateConfig({
-                              ...rotateConfig,
-                              target: 'all'
-                            })
-                          }
-                        />
-
-                        <span>
-                          Rotate all pages
-                        </span>
-                      </label>
-
-                      <label className="flex items-center gap-1.5 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="rotTarget"
-                          checked={
-                            rotateConfig.target === 'custom'
-                          }
-                          onChange={() =>
-                            setRotateConfig({
-                              ...rotateConfig,
-                              target: 'custom'
-                            })
-                          }
-                        />
-
-                        <span>
-                          Specific pages (e.g. 1, 3, 5)
-                        </span>
-                      </label>
 
                     </div>
+                  )}
 
-                    {rotateConfig.target === 'custom' && (
-                      <input
-                        type="text"
-                        placeholder="e.g. 1, 3, 5"
-                        value={rotateConfig.pageNumbers}
-                        onChange={(e) =>
-                          setRotateConfig({
-                            ...rotateConfig,
-                            pageNumbers: e.target.value
-                          })
-                        }
-                        className="w-full max-w-sm rounded-xl border border-slate-300 px-3.5 py-2 text-sm"
-                      />
-                    )}
+                </div>
+              )}
 
-                  </div>
-                )}
+            {/* Action Button */}
+            {files.length > 0 &&
+              !isProcessing && (
+                <div className="mt-8 flex justify-center">
 
-                {/* Watermark Settings */}
-                {tool.id === 'watermark-pdf' && (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <button
+                    id="execute-tool-btn"
+                    onClick={handleProcess}
+                    className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-700 hover:shadow-indigo-500/50"
+                  >
+                    <span>
+                      {tool.buttonText}
+                    </span>
+                  </button>
 
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                        Watermark Text
-                      </label>
+                </div>
+              )}
 
-                      <input
-                        type="text"
-                        value={watermarkConfig.text}
-                        onChange={(e) =>
-                          setWatermarkConfig({
-                            ...watermarkConfig,
-                            text: e.target.value
-                          })
-                        }
-                        placeholder="e.g. CONFIDENTIAL"
-                        className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                        Font Size ({watermarkConfig.fontSize}pt)
-                      </label>
-
-                      <input
-                        type="range"
-                        min="16"
-                        max="72"
-                        value={watermarkConfig.fontSize}
-                        onChange={(e) =>
-                          setWatermarkConfig({
-                            ...watermarkConfig,
-                            fontSize: parseInt(
-                              e.target.value
-                            )
-                          })
-                        }
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                        Opacity ({Math.round(watermarkConfig.opacity * 100)}%)
-                      </label>
-
-                      <input
-                        type="range"
-                        min="0.1"
-                        max="1.0"
-                        step="0.05"
-                        value={watermarkConfig.opacity}
-                        onChange={(e) =>
-                          setWatermarkConfig({
-                            ...watermarkConfig,
-                            opacity: parseFloat(
-                              e.target.value
-                            )
-                          })
-                        }
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                        Rotation Angle ({watermarkConfig.rotation}°)
-                      </label>
-
-                      <input
-                        type="range"
-                        min="-90"
-                        max="90"
-                        step="5"
-                        value={watermarkConfig.rotation}
-                        onChange={(e) =>
-                          setWatermarkConfig({
-                            ...watermarkConfig,
-                            rotation: parseInt(
-                              e.target.value
-                            )
-                          })
-                        }
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                        Position
-                      </label>
-
-                      <select
-                        value={watermarkConfig.position}
-                        onChange={(e) =>
-                          setWatermarkConfig({
-                            ...watermarkConfig,
-                            position: e.target.value as any
-                          })
-                        }
-                        className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
-                      >
-                        <option value="center">
-                          Center
-                        </option>
-
-                        <option value="top-left">
-                          Top-Left
-                        </option>
-
-                        <option value="top-right">
-                          Top-Right
-                        </option>
-
-                        <option value="bottom-left">
-                          Bottom-Left
-                        </option>
-
-                        <option value="bottom-right">
-                          Bottom-Right
-                        </option>
-
-                        <option value="diagonal">
-                          Diagonal
-                        </option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
-                        Color
-                      </label>
-
-                      <div className="flex items-center gap-2">
-
-                        <input
-                          type="color"
-                          value={watermarkConfig.color}
-                          onChange={(e) =>
-                            setWatermarkConfig({
-                              ...watermarkConfig,
-                              color: e.target.value
-                            })
-                          }
-                          className="h-9 w-12 rounded border cursor-pointer"
-                        />
-
-                        <span className="text-xs font-mono text-slate-600">
-                          {watermarkConfig.color}
-                        </span>
-
-                      </div>
-                    </div>
-
-                  </div>
-                )}
-
-              </div>
-            )}
-
-            {/* Action Trigger Button */}
-            {files.length > 0 && !isProcessing && (
-              <div className="mt-8 flex justify-center">
-
-                <button
-                  id="execute-tool-btn"
-                  onClick={handleProcess}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-700 hover:shadow-indigo-500/50"
-                >
-                  <span>{tool.buttonText}</span>
-                </button>
-
-              </div>
-            )}
-
-            {/* Progress Animation */}
+            {/* Progress */}
             {isProcessing && (
               <ProgressBar
                 progress={progress}
@@ -1022,23 +1355,22 @@ export const ToolView: React.FC<ToolViewProps> = ({
 
           </div>
         ) : (
-
-          /* Processing Results Card */
+          /* Processing Results */
           <div className="text-center animate-in zoom-in-95 duration-200">
 
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 shadow-inner">
               <CheckCircle2 className="h-10 w-10" />
             </div>
 
-            <h3 className="text-2xl font-extrabold text-slate-900">
+            <h2 className="text-2xl font-extrabold text-slate-900">
               Conversion Completed Successfully!
-            </h3>
+            </h2>
 
             <p className="mt-1 text-sm text-slate-500">
               Your generated file is ready for download.
             </p>
 
-            {/* Metrics Breakdown */}
+            {/* Metrics */}
             <div className="mx-auto my-6 max-w-md rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left">
 
               <div className="flex items-center justify-between text-xs py-1 border-b border-slate-200/60">
@@ -1061,7 +1393,9 @@ export const ToolView: React.FC<ToolViewProps> = ({
                   </span>
 
                   <span className="font-bold text-slate-800">
-                    {formatBytes(result.originalSize)}
+                    {formatBytes(
+                      result.originalSize
+                    )}
                   </span>
 
                 </div>
@@ -1075,13 +1409,16 @@ export const ToolView: React.FC<ToolViewProps> = ({
                   </span>
 
                   <span className="font-bold text-slate-800">
-                    {formatBytes(result.fileSize)}
+                    {formatBytes(
+                      result.fileSize
+                    )}
                   </span>
 
                 </div>
               )}
 
-              {result.savingsPercent !== undefined && (
+              {result.savingsPercent !==
+                undefined && (
                 <div className="flex items-center justify-between text-xs py-1 text-emerald-700 font-bold">
 
                   <span>
@@ -1089,7 +1426,9 @@ export const ToolView: React.FC<ToolViewProps> = ({
                   </span>
 
                   <span className="rounded-full bg-emerald-100 px-2 py-0.5">
-                    {result.savingsPercent}% SAVED
+                    {
+                      result.savingsPercent
+                    }% SAVED
                   </span>
 
                 </div>
@@ -1097,46 +1436,44 @@ export const ToolView: React.FC<ToolViewProps> = ({
 
             </div>
 
-            {/* Previews if PDF to JPG */}
+            {/* Preview Images */}
             {result.previewImages &&
-              result.previewImages.length > 0 && (
+              result.previewImages.length >
+                0 && (
+                <div className="my-6">
 
-              <div className="my-6">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                    Rendered Pages Preview
+                  </h3>
 
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                  Rendered Pages Preview
-                </h4>
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 max-h-80 overflow-y-auto p-2 border border-slate-200 rounded-2xl bg-slate-50">
 
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 max-h-80 overflow-y-auto p-2 border border-slate-200 rounded-2xl bg-slate-50">
+                    {result.previewImages.map(
+                      (imgUrl, i) => (
+                        <div
+                          key={i}
+                          className="group relative rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm"
+                        >
 
-                  {result.previewImages.map(
-                    (imgUrl, i) => (
+                          <img
+                            src={imgUrl}
+                            alt={`Preview of PDF page ${i + 1}`}
+                            className="w-full object-contain"
+                          />
 
-                      <div
-                        key={i}
-                        className="group relative rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm"
-                      >
+                          <div className="p-2 text-center text-xs font-bold text-slate-600 bg-slate-100/90">
+                            Page {i + 1}
+                          </div>
 
-                        <img
-                          src={imgUrl}
-                          alt={`Preview of PDF page ${i + 1}`}
-                          className="w-full object-contain"
-                        />
-
-                        <div className="p-2 text-center text-xs font-bold text-slate-600 bg-slate-100/90">
-                          Page {i + 1}
                         </div>
+                      )
+                    )}
 
-                      </div>
-
-                    )
-                  )}
-
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Download CTA Buttons */}
+            {/* Download Buttons */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
 
               <button
@@ -1144,13 +1481,11 @@ export const ToolView: React.FC<ToolViewProps> = ({
                 onClick={handleDownload}
                 className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700 hover:shadow-emerald-600/50"
               >
-
                 <Download className="h-5 w-5" />
 
                 <span>
                   Download {result.fileName}
                 </span>
-
               </button>
 
               <button
@@ -1158,18 +1493,16 @@ export const ToolView: React.FC<ToolViewProps> = ({
                 onClick={handleReset}
                 className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-6 py-4 text-base font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600"
               >
-
                 <RotateCcw className="h-4 w-4" />
 
                 <span>
                   Convert Another File
                 </span>
-
               </button>
 
             </div>
 
-            {/* Below Result Sponsored Slot */}
+            {/* Below Result Ad */}
             <AdContainer
               slot="below-result"
               className="mt-10 max-w-xl mx-auto"
@@ -1178,9 +1511,9 @@ export const ToolView: React.FC<ToolViewProps> = ({
           </div>
         )}
 
-      </div>
+      </section>
 
-      {/* Tool Details, SEO Content & Features */}
+      {/* SEO Content */}
       <section
         className="mt-16 rounded-3xl border border-slate-200 bg-white p-8 sm:p-12 shadow-sm"
         aria-labelledby="tool-information-heading"
@@ -1194,39 +1527,44 @@ export const ToolView: React.FC<ToolViewProps> = ({
         </h2>
 
         <p className="text-base text-slate-600 leading-relaxed mb-8">
-          PDFMaster provides a complete, modern, zero-installation solution for your PDF document needs. Powered by enterprise-grade document processing technology, the tool is designed to make PDF tasks quick and easy while respecting user privacy.
+          {tool.longDesc}
         </p>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
-          {tool.features.map((feat, idx) => (
+          {tool.features.map(
+            (feat, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4"
+              >
 
-            <div
-              key={idx}
-              className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4"
-            >
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
 
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
-                <CheckCircle2 className="h-4 w-4" />
+                <span className="text-sm font-semibold text-slate-800">
+                  {feat}
+                </span>
+
               </div>
-
-              <span className="text-sm font-semibold text-slate-800">
-                {feat}
-              </span>
-
-            </div>
-
-          ))}
+            )
+          )}
 
         </div>
 
       </section>
 
       {/* Tool FAQs */}
-      <FaqSection
-        faqs={tool.faqs}
-        title={`Frequently Asked Questions about ${tool.title}`}
-      />
+      <section
+        aria-labelledby="tool-faq-heading"
+        className="mt-8"
+      >
+        <FaqSection
+          faqs={tool.faqs}
+          title={`Frequently Asked Questions about ${tool.title}`}
+        />
+      </section>
 
     </div>
   );
