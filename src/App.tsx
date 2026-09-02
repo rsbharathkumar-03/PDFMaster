@@ -15,6 +15,14 @@ import { JavaCodeViewerModal } from './views/JavaCodeViewerModal';
 import { toolsCatalog } from './data/toolsData';
 import { ViewType } from './types';
 
+const SITE_URL = 'https://pdf-master-ezhr.vercel.app';
+
+const HOME_TITLE =
+  'Free Online PDF Tools - Merge, Compress, Split & Convert PDF | PDFMaster';
+
+const HOME_DESCRIPTION =
+  'PDFMaster offers free online PDF tools to merge, split, compress, convert, rotate, watermark, and protect PDF files quickly and easily.';
+
 /**
  * Convert an internal view ID into an SEO-friendly URL.
  *
@@ -87,24 +95,184 @@ const viewTitleMap: Record<string, string> = {
   'backend-code': 'Spring Boot Architecture'
 };
 
+/**
+ * Update the document metadata whenever the current page changes.
+ *
+ * This is especially important for individual PDF tool pages because
+ * each tool already has its own seoTitle and metaDesc in toolsData.ts.
+ */
+const updatePageMetadata = (view: ViewType): void => {
+  const currentTool = toolsCatalog.find(
+    (tool) => tool.id === view
+  );
+
+  let title = HOME_TITLE;
+  let description = HOME_DESCRIPTION;
+  let canonicalUrl = SITE_URL;
+
+  if (currentTool) {
+    title = currentTool.seoTitle;
+    description = currentTool.metaDesc;
+    canonicalUrl = `${SITE_URL}/${currentTool.id}`;
+  } else if (view === 'about') {
+    title = 'About PDFMaster - Free Online PDF Tools';
+    description =
+      'Learn about PDFMaster, a free online platform providing useful PDF tools for everyday document tasks.';
+    canonicalUrl = `${SITE_URL}/about`;
+  } else if (view === 'contact') {
+    title = 'Contact PDFMaster - Get in Touch';
+    description =
+      'Contact PDFMaster for questions, feedback, suggestions, or support regarding our online PDF tools.';
+    canonicalUrl = `${SITE_URL}/contact`;
+  } else if (view === 'privacy-policy') {
+    title = 'Privacy Policy - PDFMaster';
+    description =
+      'Read the PDFMaster privacy policy to understand how information is handled when using our website and PDF tools.';
+    canonicalUrl = `${SITE_URL}/privacy-policy`;
+  } else if (view === 'terms') {
+    title = 'Terms of Service - PDFMaster';
+    description =
+      'Read the PDFMaster terms of service for using our free online PDF tools.';
+    canonicalUrl = `${SITE_URL}/terms`;
+  } else if (view === 'cookie-policy') {
+    title = 'Cookie Policy - PDFMaster';
+    description =
+      'Read the PDFMaster cookie policy and learn how cookies may be used on our website.';
+    canonicalUrl = `${SITE_URL}/cookie-policy`;
+  } else if (view === 'blog') {
+    title = 'PDF Guides & Blog - PDFMaster';
+    description =
+      'Explore PDF guides, tips, tutorials, and useful information about working with PDF files.';
+    canonicalUrl = `${SITE_URL}/blog`;
+  }
+
+  // Browser title
+  document.title = title;
+
+  // Description
+  let descriptionTag = document.querySelector(
+    'meta[name="description"]'
+  ) as HTMLMetaElement | null;
+
+  if (!descriptionTag) {
+    descriptionTag = document.createElement('meta');
+    descriptionTag.name = 'description';
+    document.head.appendChild(descriptionTag);
+  }
+
+  descriptionTag.content = description;
+
+  // Canonical
+  let canonicalTag = document.querySelector(
+    'link[rel="canonical"]'
+  ) as HTMLLinkElement | null;
+
+  if (!canonicalTag) {
+    canonicalTag = document.createElement('link');
+    canonicalTag.rel = 'canonical';
+    document.head.appendChild(canonicalTag);
+  }
+
+  canonicalTag.href = canonicalUrl;
+
+  // Open Graph title
+  let ogTitle = document.querySelector(
+    'meta[property="og:title"]'
+  ) as HTMLMetaElement | null;
+
+  if (!ogTitle) {
+    ogTitle = document.createElement('meta');
+    ogTitle.setAttribute('property', 'og:title');
+    document.head.appendChild(ogTitle);
+  }
+
+  ogTitle.content = title;
+
+  // Open Graph description
+  let ogDescription = document.querySelector(
+    'meta[property="og:description"]'
+  ) as HTMLMetaElement | null;
+
+  if (!ogDescription) {
+    ogDescription = document.createElement('meta');
+    ogDescription.setAttribute(
+      'property',
+      'og:description'
+    );
+    document.head.appendChild(ogDescription);
+  }
+
+  ogDescription.content = description;
+
+  // Open Graph URL
+  let ogUrl = document.querySelector(
+    'meta[property="og:url"]'
+  ) as HTMLMetaElement | null;
+
+  if (!ogUrl) {
+    ogUrl = document.createElement('meta');
+    ogUrl.setAttribute('property', 'og:url');
+    document.head.appendChild(ogUrl);
+  }
+
+  ogUrl.content = canonicalUrl;
+
+  // Twitter title
+  let twitterTitle = document.querySelector(
+    'meta[name="twitter:title"]'
+  ) as HTMLMetaElement | null;
+
+  if (!twitterTitle) {
+    twitterTitle = document.createElement('meta');
+    twitterTitle.name = 'twitter:title';
+    document.head.appendChild(twitterTitle);
+  }
+
+  twitterTitle.content = title;
+
+  // Twitter description
+  let twitterDescription = document.querySelector(
+    'meta[name="twitter:description"]'
+  ) as HTMLMetaElement | null;
+
+  if (!twitterDescription) {
+    twitterDescription = document.createElement('meta');
+    twitterDescription.name = 'twitter:description';
+    document.head.appendChild(twitterDescription);
+  }
+
+  twitterDescription.content = description;
+};
+
 export default function App() {
   /**
    * Determine the initial page from the browser URL.
    *
-   * This means directly visiting:
+   * This allows direct URLs such as:
    *
    * https://pdf-master-ezhr.vercel.app/merge-pdf
    *
-   * will open the Merge PDF tool.
+   * to open the Merge PDF tool.
    */
-  const [currentView, setCurrentView] = useState<ViewType>(() => {
-    return pathToView();
-  });
+  const [currentView, setCurrentView] =
+    useState<ViewType>(() => pathToView());
 
-  const [historyStack, setHistoryStack] = useState<ViewType[]>([]);
-  const [showJavaModal, setShowJavaModal] = useState<boolean>(false);
+  const [historyStack, setHistoryStack] =
+    useState<ViewType[]>([]);
 
-  // Scroll to top on view change
+  const [showJavaModal, setShowJavaModal] =
+    useState<boolean>(false);
+
+  /**
+   * Update SEO metadata whenever the page changes.
+   */
+  useEffect(() => {
+    updatePageMetadata(currentView);
+  }, [currentView]);
+
+  /**
+   * Scroll to top on view change.
+   */
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -113,15 +281,10 @@ export default function App() {
   }, [currentView]);
 
   /**
-   * Synchronize browser Back/Forward buttons with the application.
+   * Synchronize browser Back/Forward buttons
+   * with the application.
    */
   useEffect(() => {
-    /**
-     * Make sure the current browser URL contains the correct view.
-     *
-     * replaceState is used here so loading the application
-     * does not create an unnecessary history entry.
-     */
     const initialPath = viewToPath(currentView);
 
     window.history.replaceState(
@@ -130,20 +293,31 @@ export default function App() {
       initialPath
     );
 
-    const handlePopState = (event: PopStateEvent) => {
-      if (event.state && event.state.view) {
-        setCurrentView(event.state.view as ViewType);
+    const handlePopState = (
+      event: PopStateEvent
+    ) => {
+      if (
+        event.state &&
+        event.state.view
+      ) {
+        setCurrentView(
+          event.state.view as ViewType
+        );
       } else {
-        // If browser history doesn't contain our state,
-        // determine the page from the URL.
         setCurrentView(pathToView());
       }
     };
 
-    window.addEventListener('popstate', handlePopState);
+    window.addEventListener(
+      'popstate',
+      handlePopState
+    );
 
     return () => {
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener(
+        'popstate',
+        handlePopState
+      );
     };
   }, []);
 
@@ -152,14 +326,14 @@ export default function App() {
    */
   const handleNavigate = useCallback(
     (view: ViewType) => {
-      // Backend code opens as a modal rather than a page.
+      // Backend code opens as a modal.
       if (view === 'backend-code') {
         setShowJavaModal(true);
         return;
       }
 
       if (view !== currentView) {
-        // Save current page for the floating back button.
+        // Save current page for the custom back button.
         setHistoryStack((prev) => [
           ...prev,
           currentView
@@ -197,9 +371,8 @@ export default function App() {
 
       setHistoryStack(nextStack);
 
-      const previousPath = viewToPath(
-        previousView
-      );
+      const previousPath =
+        viewToPath(previousView);
 
       try {
         window.history.pushState(
@@ -215,24 +388,21 @@ export default function App() {
       }
 
       setCurrentView(previousView);
-    } else {
-      // Fallback to Home
-      if (currentView !== 'home') {
-        try {
-          window.history.pushState(
-            { view: 'home' },
-            '',
-            '/'
-          );
-        } catch (error) {
-          console.error(
-            'Home navigation error:',
-            error
-          );
-        }
-
-        setCurrentView('home');
+    } else if (currentView !== 'home') {
+      try {
+        window.history.pushState(
+          { view: 'home' },
+          '',
+          '/'
+        );
+      } catch (error) {
+        console.error(
+          'Home navigation error:',
+          error
+        );
       }
+
+      setCurrentView('home');
     }
   }, [historyStack, currentView]);
 
@@ -263,26 +433,30 @@ export default function App() {
     }
   }, [currentView]);
 
-  // Determine friendly label for the previous screen.
+  // Determine friendly label for previous screen.
   const previousViewKey =
     historyStack.length > 0
-      ? historyStack[historyStack.length - 1]
+      ? historyStack[
+          historyStack.length - 1
+        ]
       : undefined;
 
   const previousTool = previousViewKey
     ? toolsCatalog.find(
-        (tool) => tool.id === previousViewKey
+        (tool) =>
+          tool.id === previousViewKey
       )
     : undefined;
 
   const previousViewTitle = previousTool
     ? previousTool.title
     : previousViewKey
-      ? viewTitleMap[previousViewKey] ||
-        'Previous Screen'
+      ? viewTitleMap[
+          previousViewKey
+        ] || 'Previous Screen'
       : 'Home';
 
-  // Find the currently selected PDF tool.
+  // Find currently selected PDF tool.
   const currentTool = toolsCatalog.find(
     (tool) => tool.id === currentView
   );
